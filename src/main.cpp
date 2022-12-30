@@ -159,15 +159,14 @@ void TestModbus() {
   }, "TestModbus", 5 * 1024, NULL, 10, NULL);
 }
 
-#include <Artron_DS1338.h>
+#include <RTC.h>
 #include <Wire.h>
 
-Artron_DS1338 rtc;
 
 void TestI2CAndRTC() {
   xTaskCreate([](void*) {
     Wire.begin();
-    while (!rtc.begin()) {
+    while (!RTC_init()) {
       Serial.println("Init RTC fail !!!");
       delay(500);
     }
@@ -181,7 +180,7 @@ void TestI2CAndRTC() {
       .tm_year = 2020,
     };
 
-    while (!rtc.write(&timeinfo_write)) {
+    while (!RTC_write(&timeinfo_write)) {
       Serial.println("RTC write fail !!!");
       delay(500);
     }
@@ -189,7 +188,7 @@ void TestI2CAndRTC() {
 
     while(1) {
       struct tm timeinfo_read = { 0 };
-      if (!rtc.read(&timeinfo_read)) {
+      if (!RTC_read(&timeinfo_read)) {
         Serial.println("RTC read fail !!!");
         delay(500);
         continue;
